@@ -228,6 +228,7 @@ int main()
     //в этом режиме видно, что четырехугольник состоит из треугольников
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    //jlgyuvlyofu
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
