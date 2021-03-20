@@ -33,6 +33,13 @@ const char* fragment_shader =
 "   frag_color = vec4(1.0f, 0.5f, 0.2f, 1.0);"
 "}";
 
+const char* fragment_shader2 =
+"#version 460\n"
+"out vec4 color;"
+"void main() {"
+"   color = vec4(0.0f, 0.0f, 1.0f, 1.0);"
+"}";
+
 //задаем размеры окна
 int winSizeX = 640;
 int winSizeY = 480;
@@ -123,7 +130,7 @@ int main()
 
     // Fragment shader
     GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fs, 1, &fragment_shader, nullptr);
+    glShaderSource(fs, 1, &fragment_shader2, nullptr);
     glCompileShader(fs);
 
     //С хабрааааа
