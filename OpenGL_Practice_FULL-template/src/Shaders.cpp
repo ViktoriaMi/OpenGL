@@ -68,31 +68,35 @@ GLuint createShader(){
             vCoord = aCoord;
         }
     );
+
+        // фрагментный шейдер
     const char* fragmentShader = STRINGIFY_SHADER(
-        varying vec3 vColor;
-        varying vec2 vCoord;
-        varying vec3 vNormal;
-        varying vec3 vFragPos;
-        uniform sampler2D newTexture0;
-        float ambient_f = 0.4f;
-        vec3 lightPos = vec3(0.5f, 0.5f, -0.9f);
-        vec3 diffuse_f = vec3(0.9f, 0.9f, 0.9f);
+    varying vec3 vColor;
+    varying vec2 vCoord;
+    varying vec3 vNormal;
+    varying vec3 vFragPos;
+    uniform sampler2D newTexture0;
+    float ambient_f = 0.4f;
+    vec3 lightPos = vec3(0.5f, 0.5f, -0.9f);
+    vec3 diffuse_f = vec3(0.9f, 0.9f, 0.9f);
 
-        void main () {
-            //gl_FragColor = vec4(vColor, 1.0);
-            //vec3 ambient = 0.4f * vec3(texture2D(newTexture0, vCoord));
-            vec3 ambient = ambient_f * vec3(texture2D(newTexture0, vCoord));
+    void main () {
+        //gl_FragColor = vec4(vColor, 1.0);
+        //vec3 ambient = 0.4f * vec3(texture2D(newTexture0, vCoord));
+        vec3 ambient = ambient_f * vec3(texture2D(newTexture0, vCoord));
 
-            //deffuse - рассеянное освещение
-            vec3 norm = normalize(vNormal);
-            vec3 lightDir = normalize(lightPos - vFragPos);
-            float diff = max(dot(norm, lightDir), 0.0f);
-            vec3 diffuse = diff * diffuse_f * vec3(texture2D(newTexture0, vCoord));
+        //deffuse - рассеянное освещение
+        vec3 norm = normalize(vNormal);
+        vec3 lightDir = normalize(lightPos - vFragPos);
+        float diff = max(dot(norm, lightDir), 0.0f);
+        vec3 diffuse = diff * diffuse_f * vec3(texture2D(newTexture0, vCoord));
 
-            vec3 result = (ambient + diffuse);
-            //gl_FragColor = texture2D(newTexture0, vCoord) * vec4(vec3(1.0f, 1.0f, 1.0f), 1.0);
-            gl_FragColor = vec4(result, 1.0f);
-        }
+        vec3 result = (ambient + diffuse);
+        //gl_FragColor = texture2D(newTexture0, vCoord) * vec4(vec3(1.0f, 1.0f, 1.0f), 1.0);
+        if (result == vec3(0.0, 0.0, 0.0))
+            discard;
+        gl_FragColor = vec4(result, 1.0f);
+    }
     );
 
     GLuint shader = createShaderFromSources(vertexShader, fragmentShader);

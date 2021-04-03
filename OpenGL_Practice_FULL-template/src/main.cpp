@@ -212,7 +212,7 @@ int main(int argc, char *argv[]) {
     double time = glfwGetTime();
 
     // Загрузка текстуры
-    ImageData info = loadPngImage("/home/viktoria/Downloads/MSTU/IGS/OpenGL_Practice_FULL-template/res/test.png");
+    ImageData info = loadPngImage("/home/viktoria/Downloads/MSTU/IGS/OpenGL_Practice_FULL-template/res/test2.png");
     uint textureId = 0;
     if(info.loaded){
         glGenTextures(1, &textureId);
