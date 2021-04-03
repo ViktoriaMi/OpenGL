@@ -8,11 +8,16 @@
 #include <iostream>
 #include <math.h>
 #include <stdio.h>
+
+//#include <glad/glad.h>
+//#include "camera.h"
+
 #include <GL/glew.h>        // для поддержки расширений, шейдеров и так далее
 #include <GLFW/glfw3.h>     // Непосредственно сам GLFW
-#include <glm.hpp>          // библиотека графической математики
+//#include <glm.h>            // библиотека графической математики
 #include <gtc/type_ptr.hpp>
 #include <gtc/matrix_transform.hpp>
+
 #include "PngLoader.h"
 #include "Helpers.h"
 #include "Vertex.h"
@@ -40,26 +45,19 @@ void glfwErrorCallback(int error, const char* description) {
 
 void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     // Выходим по нажатию Escape
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    {
-        glfwSetWindowShouldClose(window, GL_TRUE);
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
     }
     // по пробелу включаем или выключаем вращение автоматом
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS){
     }
 }
 
-void glfwMouseButtonCallback(GLFWwindow* window, int button, int state, int mod)
-{
+void glfwMouseButtonCallback(GLFWwindow* window, int button, int state, int mod) {
     // обработка левой кнопки
-    if(button == GLFW_MOUSE_BUTTON_1)
-    {
-        if (state == GLFW_PRESS)
-        {
+    if(button == GLFW_MOUSE_BUTTON_1){
+        if(state == GLFW_PRESS){
             leftButtonPressed = true;
-        }
-        else
-        {
+        }else{
             leftButtonPressed = false;
         }
     }
@@ -118,13 +116,12 @@ int main(int argc, char *argv[]) {
 #endif
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-    window = glfwCreateWindow(640, 480, "The rotating cube!", NULL, NULL);
+    window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
 
-    //делаем текущее окно активным, выполняем контекст OpenGL для него
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);        // вертикальная синхронизация
     CHECK_GL_ERRORS();
@@ -180,6 +177,8 @@ int main(int argc, char *argv[]) {
     // аттрибуты вершин шейдера
     int posAttribLocation = glGetAttribLocation(shaderProgram, "aPos");
     int colorAttribLocation = glGetAttribLocation(shaderProgram, "aColor");
+    int texAttribLocation = glGetAttribLocation(shaderProgram, "aCoord");
+    int normAttribLocation = glGetAttribLocation(shaderProgram, "aNormal");
     CHECK_GL_ERRORS();
 
     // юниформы шейдера
@@ -213,19 +212,20 @@ int main(int argc, char *argv[]) {
     double time = glfwGetTime();
 
     // Загрузка текстуры
-    ImageData info = loadPngImage("res/test.png");
+    ImageData info = loadPngImage("/home/viktoria/Downloads/MSTU/IGS/OpenGL_Practice_FULL-template/res/test.png");
     uint textureId = 0;
     if(info.loaded){
         glGenTextures(1, &textureId);
         glBindTexture(GL_TEXTURE_2D, textureId);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,              // формат внутри OpenGL
-                     info.width, info.height, 0,            // ширина, высота, границы
+                     info.width, info.height, 0,            // ширинна, высота, границы
                      info.withAlpha ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, info.data); // формат входных данных
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         CHECK_GL_ERRORS();
     }
 //    float degrees = 1.0f;
+
     while (!glfwWindowShouldClose(window)){
         // приращение времени
         double newTime = glfwGetTime();
@@ -240,7 +240,7 @@ int main(int argc, char *argv[]) {
         // матрица модель-вид-проекция
         mat4 modelViewProjMatrix = mat4(1.0);
 
-        modelViewProjMatrix = rotate(modelViewProjMatrix, float(time), vec3(0.5f, 0.5f, 1.0f));
+        modelViewProjMatrix = rotate(modelViewProjMatrix, float(time), vec3(0.5f, 0.5f, 0.5f));
 //        degrees += 0.1f;
 //        if (degrees >= 180) degrees = 0;
 //        //cout << degrees << ' ';
@@ -256,6 +256,12 @@ int main(int argc, char *argv[]) {
         // Цвет вершин
         glEnableVertexAttribArray(colorAttribLocation);
         glVertexAttribPointer(colorAttribLocation, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), OFFSETOF(Vertex, color));
+        // Текстуры
+        glEnableVertexAttribArray(texAttribLocation);
+        glVertexAttribPointer(texAttribLocation, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), OFFSETOF(Vertex, texCoord));
+        // Нормали
+        glEnableVertexAttribArray(normAttribLocation);
+        glVertexAttribPointer(normAttribLocation, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), OFFSETOF(Vertex, normal));
         CHECK_GL_ERRORS();
 
         // рисуем
