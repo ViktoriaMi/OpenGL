@@ -1,6 +1,5 @@
 #include "WebMYUVConverter.h"
 
-
 namespace xgen {
 namespace video {
         
@@ -9,6 +8,7 @@ void yuv420ToRGBA(uint width, uint height,
                   unsigned int ystride, unsigned int ustride, unsigned int vstride,
                   unsigned char* out){
     // CODE HERE!!!
+
 }
 
 void yuv420AToRGBA(uint width, uint height,
@@ -16,6 +16,7 @@ void yuv420AToRGBA(uint width, uint height,
                    unsigned int ystride, unsigned int ustride, unsigned int vstride, unsigned int astride,
                    unsigned char* out){
     // CODE HERE!!!
+
 }
 
 void yuv420ToRGB(uint width, uint height,
@@ -23,6 +24,7 @@ void yuv420ToRGB(uint width, uint height,
                  unsigned int ystride, unsigned int ustride, unsigned int vstride,
                  unsigned char* out){
     // CODE HERE!!!
+
 }
 
 // Y в альфу компоненту буфферов
@@ -31,6 +33,8 @@ void yToA(uint width, uint height,
           unsigned int ystride,
           unsigned char* out){
     // CODE HERE!!!
+
+
 }
         
 }

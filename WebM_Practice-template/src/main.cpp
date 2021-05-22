@@ -21,52 +21,70 @@
 
 #define MATH_PI 3.14159265
 
-
 // Документация
 // https://www.opengl.org/sdk/docs/man/html/
 
 using namespace std;
 using namespace glm;
 
-
 // Текущие переменные для модели
 bool leftButtonPressed = false;
 bool rightPressed = false;
 double lastCursorPosX = 0.0;
 double lastCursorPosY = 0.0;
+bool pause_check = false;
+int space_counter = 0;
 
 DrawManager* drawManager = nullptr;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-void glfwErrorCallback(int error, const char* description) {
+void glfwErrorCallback(int error, const char* description)
+{
     printf("OpenGL error = %d\n description = %s\n\n", error, description);
 }
 
-void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
     // Выходим по нажатию Escape
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    {
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
     // по пробелу включаем или выключаем вращение автоматом
-    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS){
+    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+    {
+        pause_check = true;
+        space_counter++;
+        if(space_counter == 2)
+        {
+            space_counter = 0;
+            pause_check = false;
+        }
     }
 }
 
-void glfwMouseButtonCallback(GLFWwindow* window, int button, int state, int mod) {
+void glfwMouseButtonCallback(GLFWwindow* window, int button, int state, int mod)
+{
     // обработка левой кнопки
-    if(button == GLFW_MOUSE_BUTTON_1){
-        if(state == GLFW_PRESS){
+    if(button == GLFW_MOUSE_BUTTON_1)
+    {
+        if(state == GLFW_PRESS)
+        {
             leftButtonPressed = true;
-        }else{
+        }else
+        {
             leftButtonPressed = false;
         }
     }
     // обработка правой кнопки
-    if(button == GLFW_MOUSE_BUTTON_2){
-        if(state == GLFW_PRESS){
+    if(button == GLFW_MOUSE_BUTTON_2)
+    {
+        if(state == GLFW_PRESS)
+        {
             rightPressed = true;
-        }else{
+        }else
+        {
             rightPressed = false;
         }
     }
@@ -202,7 +220,6 @@ GLFWwindow* createWindow(){
     return window;
 }
 
-
 int main(int argc, char *argv[]) {
     GLFWwindow* window = createWindow();
     
@@ -236,20 +253,25 @@ int main(int argc, char *argv[]) {
         
         glfwSwapBuffers(window);
         glfwPollEvents();
-        
-        // decode
-        double frameDecodeBegin = glfwGetTime();
-        if (drawManager) {
-            drawManager->decodeNewFrame();
+
+        // проверка на нажатие паузы
+        if(!pause_check)
+        {
+            // decode
+            double frameDecodeBegin = glfwGetTime();
+            if (drawManager)
+            {
+                drawManager->decodeNewFrame();
+            }
+            double frameDecodeEnd = glfwGetTime();
+            double frameDecodeTime = frameDecodeEnd - frameDecodeBegin;
+            // время отображения текущего кадра
+            double sleepTime = std::max(frameDuration - frameDecodeTime, 0.0);
+            if (sleepTime > 0)
+                std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(sleepTime * 1000.0)));
         }
-        double frameDecodeEnd = glfwGetTime();
-        double frameDecodeTime = frameDecodeEnd - frameDecodeBegin;
-        
-        // время отображения текущего кадра
-        double sleepTime = std::max(frameDuration - frameDecodeTime, 0.0);
-        if (sleepTime > 0) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(sleepTime * 1000.0)));
-        }
+        else
+            std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(100.0)));
     }
 
     delete drawManager;

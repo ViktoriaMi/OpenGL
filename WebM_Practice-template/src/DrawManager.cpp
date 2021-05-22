@@ -48,9 +48,22 @@ DrawManager::~DrawManager(){
 
 void DrawManager::createDecoder(){
 #ifdef _WIN32
-    std::string filePath = "res\\big-buck-bunny_trailer.webm";
+    std::string filePath = "/home/viktoria/Downloads/MSTU/IGS/WebM_Practice-template/res/elephants-dream.webm";
 #else
-    std::string filePath = "res/big-buck-bunny_trailer.webm";
+    //std::string filePath = "res/big-buck-bunny_trailer.webm";
+    //std::string filePath = "/home/viktoria/Downloads/MSTU/IGS/WebM_Practice-template/res/big-buck-bunny_trailer.webm";
+    std::string filePath = "/home/viktoria/Downloads/MSTU/IGS/WebM_Practice-template/res/elephants-dream.webm";
+//    std::string filePath = "/home/viktoria/Downloads/MSTU/IGS/WebM_Practice-template/res/out9.webm";
+//    std::string filePath = "/home/viktoria/Downloads/MSTU/IGS/WebM_Practice-template/res/small.webm";
+//    std::string filePath = "/home/viktoria/Downloads/MSTU/IGS/WebM_Practice-template/res/with_alpha_vp8-1.webm";
+//    std::string filePath = "/home/viktoria/Downloads/MSTU/IGS/WebM_Practice-template/res/with_alpha_vp8-2.webm";
+//    std::string filePath = "/home/viktoria/Downloads/MSTU/IGS/WebM_Practice-template/res/with_alpha_vp8-3.webm";
+//    std::string filePath = "/home/viktoria/Downloads/MSTU/IGS/WebM_Practice-template/res/with_alpha_vp8-4.webm";
+//    std::string filePath = "/home/viktoria/Downloads/MSTU/IGS/WebM_Practice-template/res/with_alpha_vp8-5.webm";
+//    std::string filePath = "/home/viktoria/Downloads/MSTU/IGS/WebM_Practice-template/res/with_alpha_vp8-6.webm";
+//    std::string filePath = "/home/viktoria/Downloads/MSTU/IGS/WebM_Practice-template/res/with_alpha_vp9-1.webm";
+//    std::string filePath = "/home/viktoria/Downloads/MSTU/IGS/WebM_Practice-template/res/with_alpha_vp9-2.webm";
+//    std::string filePath = "/home/viktoria/Downloads/MSTU/IGS/WebM_Practice-template/res/with_alpha_vp9-3.webm";
 #endif
     _decoder = make_shared<WebMVideoDecoder>(filePath);
     

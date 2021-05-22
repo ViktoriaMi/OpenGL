@@ -307,3 +307,8 @@ add_dependencies (${EXECUTABLE_NAME} ${LIBS_DEPENCY_NAMES})
 # Библиотеки, с которыми будем ликовать
 # link_directories(${LIBS_LINK_FOLDERS})
 target_link_libraries (${EXECUTABLE_NAME} ${LIBS_LINK_NAMES} ${SYSTEM_LIBS})
+
+
+
+##add_subdirectory(libs/glm)
+##target_link_libraries(${PROJECT_NAME} glm)

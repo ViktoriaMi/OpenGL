@@ -402,17 +402,28 @@ void WebMVideoDecoder::decodeNewFrame(){
             for (uint j = 0; j < packetsCount; ++j) { // for (int j=0; j < 1; ++j) { // проверка проигрывания одного кадра
                 // чтение
                 // CODE HERE!!!
-                
+                unsigned char* data;
+                size_t data_size;
+                nestegg_packet_data(packet, j, &data, &data_size);
                 // чтение альфы
                 // CODE HERE!!!
                 
                 // Выполнение декодирования кадра
                 // CODE HERE!!!
+                r = vpx_codec_decode(&_normalCodec, data, data_size, 0, 0);
                 
                 // Если есть альфа, то декодим альфу
                 if (_withAlpha) {
-                    // Выполнение декодирования альфы кадра
+
                     // CODE HERE!!!
+                    unsigned char* add_data;
+                    size_t add_data_size;
+                    r = nestegg_packet_additional_data(packet, 1, &add_data, &add_data_size);
+                    assert(r == 0);
+
+                    // Выполнение декодирования альфы кадра
+                    r = vpx_codec_decode(&_alphaCodec, add_data, add_data_size, 0, 0);
+                    assert(r == VPX_CODEC_OK);
                 }
             }
             speedtest_end(DECODE);
@@ -422,9 +433,60 @@ void WebMVideoDecoder::decodeNewFrame(){
             if (_withAlpha) {
                 // чтение с альфой
                 // CODE HERE!!!
+                vpx_codec_iter_t iter = NULL;
+                vpx_image_t* img = NULL;
+                vpx_codec_iter_t alphaIter = NULL;
+                vpx_image_t* alphaImg = NULL;
+                while((img = vpx_codec_get_frame(&_normalCodec, &iter)) && (alphaImg = vpx_codec_get_frame(&_alphaCodec, &alphaIter))) {
+                    uint width = img->d_w;
+                    uint height = img->d_h;
+
+                    unsigned char* planeY = img->planes[VPX_PLANE_Y];
+                    unsigned char* planeU = img->planes[VPX_PLANE_U];
+                    unsigned char* planeV = img->planes[VPX_PLANE_V];
+                    unsigned char* planeAlpha = alphaImg->planes[VPX_PLANE_Y];
+
+                    int strideY = img->stride[VPX_PLANE_Y];
+                    int strideU = img->stride[VPX_PLANE_U];
+                    int strideV = img->stride[VPX_PLANE_V];
+                    int strideAlpha = alphaImg->stride[VPX_PLANE_Y];
+
+                    libyuv::I420AlphaToABGR(planeY, strideY,
+                                            planeU, strideU,
+                                            planeV, strideV,
+                                            planeAlpha, strideAlpha,
+                                            _decodedBuffer, width*_bufferStride,
+                                            width, -height, 0);
+
+                    // чтобы выполнилось лишь один раз
+                    break;
+                }
             } else{
                 // чтение без альфы
                 // CODE HERE!!!
+                vpx_codec_iter_t iter = NULL;
+                vpx_image_t* img = NULL;
+                while((img = vpx_codec_get_frame(&_normalCodec, &iter))) {
+                    uint width = img->d_w;
+                    uint height = img->d_h;
+
+                    unsigned char* planeY = img->planes[VPX_PLANE_Y];
+                    unsigned char* planeU = img->planes[VPX_PLANE_U];
+                    unsigned char* planeV = img->planes[VPX_PLANE_V];
+
+                    int strideY = img->stride[VPX_PLANE_Y];
+                    int strideU = img->stride[VPX_PLANE_U];
+                    int strideV = img->stride[VPX_PLANE_V];
+
+                    libyuv::I420ToABGR(planeY, strideY,
+                                       planeU, strideU,
+                                       planeV, strideV,
+                                       _decodedBuffer, width*_bufferStride,
+                                       width, -height);
+
+                    // чтобы выполнилось лишь один раз
+                    break;
+                }
             }
             speedtest_end(CONVERT);
             
@@ -472,6 +534,10 @@ void WebMVideoDecoder::copyDataToTexture(uint textureid){
     // выводим в текстуру
     if (_decodedBuffer) {
         // CODE HERE!!!
+        glBindTexture(GL_TEXTURE_2D, textureid);
+        int width = _nestegVideoParams.width;
+        int height = _nestegVideoParams.height;
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, _decodedBuffer);
     }
     
     // обнуляем дельту для поддержки фпс
