@@ -320,20 +320,20 @@ int main(int argc, char *argv[]) {
     // текущее время
     double time = glfwGetTime();
 
-<<<<<<< Updated upstream
+
     // Загрузка текстуры
-    ImageData info = loadPngImage("/home/viktoria/Downloads/MSTU/IGS/OpenGL_Practice_FULL-template/res/test.png");
+    ImageData* info = loadPngImage("/home/viktoria/Downloads/MSTU/IGS/OpenGL_Practice_FULL-template/res/test.png");
     uint textureId = 0;
-    if(info.loaded){
+    if(info->loaded){
         glGenTextures(1, &textureId);
         glBindTexture(GL_TEXTURE_2D, textureId);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB,              // формат внутри OpenGL
-                     info.width, info.height, 0,            // ширинна, высота, границы
-                     info.withAlpha ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, info.data); // формат входных данных
+                     info->width, info->height, 0,            // ширинна, высота, границы
+                     info->withAlpha ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, info->data); // формат входных данных
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         CHECK_GL_ERRORS();
-=======
+
     // пропишем число планет
     int numPlanets = 9;
     Space *planets[numPlanets];
@@ -359,7 +359,6 @@ int main(int argc, char *argv[]) {
     planets[8] = new Space(8, 0.98, -20*8, 0.22, 0.033);
 
 
-
     // загрузка текстур для планет
     GLuint planetTextures[numPlanets];
     glGenTextures(numPlanets, planetTextures);
@@ -377,7 +376,7 @@ int main(int argc, char *argv[]) {
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             CHECK_GL_ERRORS();
         }
->>>>>>> Stashed changes
+
     }
 
     // Загрузка текстуры
@@ -411,7 +410,6 @@ int main(int argc, char *argv[]) {
         //Sky_show();
         glActiveTexture(GL_TEXTURE0);
         glUseProgram (shaderProgram);
-
 
         for (int i = 0; i < numPlanets; i++)
         {
@@ -488,4 +486,5 @@ int main(int argc, char *argv[]) {
     glfwTerminate();
     exit(EXIT_SUCCESS);
     return 0;
+}
 }
