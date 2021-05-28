@@ -177,8 +177,6 @@ int main()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
 
-
-
 //для четырехугольника
 //    GLfloat vertices[] = {
 //         0.5f,  0.5f, 0.0f,  // Top Right

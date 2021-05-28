@@ -83,6 +83,7 @@ if (UNIX)
 endif()
 
 # Инициализация проекта
+enable_language(CXX)
 project(${PROJECT_NAME} C CXX)
 
 enable_testing()
